@@ -1,3 +1,4 @@
+
 let cards = [
   {
     name: "php",
@@ -104,17 +105,18 @@ let cards = [
 let divComponent = document.createElement("div");
 document.body.appendChild(divComponent);
 divComponent.style.width = "1000px";
-divComponent.style.height = "800px";
+divComponent.style.height = "805px";
 divComponent.style.background = "green";
 divComponent.style.position = "absolute";
 divComponent.style.left = "20%";
 divComponent.style.top = "20%";
+divComponent.className = "divComponent";
 
 let score = 1000;
-let game = false;
+let gameOn = false;
 let createScore = document.createElement("div");
 document.body.appendChild(createScore);
-createScore.style.width = "200px";
+createScore.style.width = "250px";
 createScore.style.color = "black";
 createScore.innerText = " your score: 0";
 createScore.style.fontSize = "30px";
@@ -131,14 +133,27 @@ function createButtonPlay() {
   createScore.appendChild(creatButtonPlay);
   return creatButtonPlay;
 }
-//createButtonPlay();
 let buttonPlay = createButtonPlay();
 buttonPlay.addEventListener("click", () => {
   createScore.innerText = " your score: " + score;
- // shuffleCards(cards);
-  game = true;
+  shuffleCards(cards);
+  gameOn = true;
   createCard();
+  createImage();
+  Timer();
+  let mintues = 1;
+  let display = document.getElementById('timer');
+  startCountdown(mintues, display);
 });
+
+let divBackComponent = document.createElement("div");
+
+divBackComponent.style.width = "1000px";
+divBackComponent.style.height = "805px";
+divBackComponent.style.position = "absolute";
+divBackComponent.style.left = "20%";
+divBackComponent.style.top = "20%";
+divBackComponent.className = "divback";
 
 function createCard() {
   let card = [];
@@ -161,7 +176,6 @@ function createCard() {
       card[index].style.left = khoangCach + "px";
       card[index].style.top = distanceTop + "px";
       card[index].id = "card-" + index;
-      
       card[index].addEventListener("click", clickCard);
 
       label[index] = document.createElement("p");
@@ -173,6 +187,25 @@ function createCard() {
       label[index].style.textAlign = "center";
       label[index].style.fontSize = "50px";
       label[index].style.color = "white";
+
+
+
+      count++;
+      if (count == 5) {
+        distanceTop += 200;
+        count = 0;
+      }
+    }
+  }
+}
+
+function createImage() {
+  let divBack = [];
+  let distanceTop = 0;
+  let count = 0;
+  for (let index = 0; index < 20; index++) {
+    let khoangCach = 0;
+    if (index >= 0 && index < 20) {
 
       divBack[index] = document.createElement("img");
       divComponent.appendChild(divBack[index]);
@@ -191,30 +224,31 @@ function createCard() {
       }
     }
   }
+
 }
 
-// function shuffleCards(array) {
-//   let counter = array.length;
-//   while (counter > 0) {
-//     let index = Math.floor(Math.random() * counter);
-//     counter--;
-//     let temp = array[counter];
-//     array[counter] = array[index];
-//     array[index] = temp;
-//   }
-//   return array;
-// }
+function shuffleCards(array) {
+  let counter = array.length;
+  while (counter > 0) {
+    let index = Math.floor(Math.random() * counter);
+    counter--;
+    let temp = array[counter];
+    array[counter] = array[index];
+    array[index] = temp;
+  }
+  return array;
+}
 
 function clickCard(e) {
   console.log(e);
   console.log(e.path[1].id);
 
-  if (game == true) {
+  if (gameOn == true) {
     let dem = 0;
     if (dem > 2) {
       dem = 0;
       for (let index = 0; index < 20; index++) {
-        document.getElementById("card-" + index).style.display = "block";
+        document.getElementById('card-' + index).style.display = "block";
       }
     } else {
       dem++;
@@ -223,6 +257,8 @@ function clickCard(e) {
       let m = e.path[n].id;
       document.getElementById(m).style.display = "none";
     }
+
+
   }
 }
 
@@ -232,10 +268,84 @@ function checkCard() {
   if (dem == 2) {
     dem = 0;
     for (let index = 0; index < 20; index++) {
-      document.getElementById("card-" + index).style.display = "block";
+      document.getElementById('card-' + index).style.display = "block";
     }
-  } else {
+  }
+  else {
     dem++;
     console.log(dem);
   }
+
 }
+
+console.log(shuffleCards(cards));
+
+function startCountdown(duration, display) {
+  let timer = 60 * duration, minutes, seconds;
+  countdown = setInterval(() => {
+    minutes = parseInt(timer / 60, 10);
+    seconds = parseInt(timer % 60, 10);
+    minutes = minutes < 10 ? "0" + minutes : minutes;
+    seconds = seconds < 10 ? "0" + seconds : seconds;
+    display.textContent = `Time ${minutes}:${seconds}`;
+    if (--timer < 0) {
+      gameOver();
+      reset();
+    }
+  }, 1000);
+}
+
+
+function Timer() {
+  let timerDisplay = document.createElement('div');
+  createScore.appendChild(timerDisplay);
+  timerDisplay.innerText = "Timer:";
+  timerDisplay.style.color = "black";
+  timerDisplay.style.width = "200px";
+  timerDisplay.style.height = "40px";
+  timerDisplay.style.top = "20%";
+  timerDisplay.id = "timer";
+}
+
+
+function gameOver() {
+  gameOn = false;
+  alert("Game Over");
+  clearInterval(countdown);
+}
+
+function btnPlayAgain() {
+  let creatButtonPlayAgain = document.createElement("button");
+  creatButtonPlayAgain.innerText = "Play Again";
+  creatButtonPlayAgain.style.color = "gray";
+  creatButtonPlayAgain.style.width = "100px";
+  creatButtonPlayAgain.style.height = "40px";
+  creatButtonPlayAgain.style.top = "20%";
+  createScore.appendChild(creatButtonPlayAgain);
+  return creatButtonPlayAgain;
+}
+
+function reset() {
+  let buttonPlayAgain = btnPlayAgain();
+  buttonPlayAgain.addEventListener("click", () => {
+    createScore.innerText = " your score: " + score;
+    resetGame();
+    shuffleCards(cards);
+    gameOn = true;
+    createCard();
+    Timer();
+    let mintues = 1;
+    let display = document.getElementById('timer');
+    startCountdown(mintues, display);
+  });
+}
+
+function resetGame() {
+  for (let index = 0; index < 20; index++) {
+    let element = document.getElementById('card-' + index);
+    element.remove();
+  }
+}
+
+
+
