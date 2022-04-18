@@ -135,7 +135,7 @@ function createButtonPlay() {
 let buttonPlay = createButtonPlay();
 buttonPlay.addEventListener("click", () => {
   createScore.innerText = " your score: " + score;
-  shuffleCards(cards);
+ // shuffleCards(cards);
   game = true;
   createCard();
 });
@@ -193,17 +193,17 @@ function createCard() {
   }
 }
 
-function shuffleCards(array) {
-  let counter = array.length;
-  while (counter > 0) {
-    let index = Math.floor(Math.random() * counter);
-    counter--;
-    let temp = array[counter];
-    array[counter] = array[index];
-    array[index] = temp;
-  }
-  return array;
-}
+// function shuffleCards(array) {
+//   let counter = array.length;
+//   while (counter > 0) {
+//     let index = Math.floor(Math.random() * counter);
+//     counter--;
+//     let temp = array[counter];
+//     array[counter] = array[index];
+//     array[index] = temp;
+//   }
+//   return array;
+// }
 
 function clickCard(e) {
   console.log(e);
@@ -239,5 +239,3 @@ function checkCard() {
     console.log(dem);
   }
 }
-
-console.log(shuffleCards(cards));
