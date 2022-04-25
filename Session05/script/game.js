@@ -13,14 +13,23 @@ class Game extends Node {
 
     _init() {
         this._createBackGround();
+        this.soundMusic = new Audio("./audio/music.mp3");
+        this.soundBreak = new Audio("./audio/break.mp3");
+        this.soundShot = new Audio("./audio/shot.mp3");
+        this.soundDeath = new Audio("./audio/death.mp3");
+
         this.count = 0;
-        this.canClick = true;
+        //this._isClicked = false;
+        this.canClick = false;
         this.fistCard = null;
         this.secondCard = null;
         this.toTalPoint = { value: 100 };
         this.point = 100;
         this._createScore();
         this._createPlayGame();
+        setTimeout(() => {
+            this.canClick = true
+        }, 5000);
     }
     _createBackGround() {
         this.elm.style.backgroundImage = "url(./images/trucxanh_bg.jpg)";
@@ -40,20 +49,22 @@ class Game extends Node {
             card.setValue(index % 10);
             card.x = 350;
             card.y = 230;
-            card.opacity = 1;
             this.addChild(card);
             card.elm.addEventListener("click", this.onClickCard.bind(this, card));
             this.tl.from(card, { x: 350, y: 230, opacity: 0, duration: 0.05 })
                 .from(card.cover.elm, { display: "none", duration: 0.05 });
 
         }
+
         this.cards.reverse();
         setTimeout(() => {
             this._playMoveCard(this.cards);
         }, 2500);
         console.log(this.cards);
         this.play.elm.style.display = "none";
+        this.soundMusic.play();
     }
+
 
     shuffleCards(array) {
         let counter = array.length;
@@ -87,6 +98,7 @@ class Game extends Node {
         this.play.y = 50;
         this.play.elm.addEventListener("click", this._createCards.bind(this));
         this.addChild(this.play);
+
     }
 
     _createPlayAgain() {
@@ -98,6 +110,7 @@ class Game extends Node {
         this.playAgain.y = 200;
         this.playAgain.elm.addEventListener("click", this.resetGame.bind(this));
         this.addChild(this.playAgain);
+        this.soundMusic.play();
     }
 
     _createCongratulation() {
@@ -144,11 +157,12 @@ class Game extends Node {
         if (!this.canClick) return;
 
         if (this.fistCard === card) return;
-
+        if (this.fistCard != null && this.secondCard != null) { this.canClick = false }
         if (this.fistCard === null) {
             this.fistCard = card;
             // open card
             this.fistCard.sprite.scaleX = 0;
+            this.soundShot.play();
             this.fistCard.flipOpenCard();
             console.log('first01', this.fistCard.value, this.fistCard.index);
 
@@ -157,6 +171,8 @@ class Game extends Node {
             this.secondCard = card;
             // open card
             this.secondCard.sprite.scaleX = 0;
+            this.soundShot.pause();
+            this.soundShot.play();
             this.secondCard.flipOpenCard();
             console.log('first02', this.secondCard.value, this.secondCard.index);
             setTimeout(() => { this.compareCard() }, 1000);
@@ -176,16 +192,22 @@ class Game extends Node {
 
     compareCard() {
         if (this.fistCard.value === this.secondCard.value) {
-
             // hide
+            this.canClick = false;
             this.fistCard.sprite.zIndex = 2;
             this.secondCard.sprite.zIndex = 2;
-            this.fistCard.zoomIn();
-            this.secondCard.zoomIn();
             this.point += 10;
             this.count++;
+            this.fistCard.zoomIn();
+            this.secondCard.zoomIn();
+            setTimeout(() => {
+                this.soundBreak.play();
+            }, 1000)
+
         } else {
             //close
+            this.canClick = true;
+            this.soundDeath.play();
             this.fistCard.flipCloseCard();
             this.secondCard.flipCloseCard();
             this.point -= 10;
@@ -199,10 +221,10 @@ class Game extends Node {
     }
 
     checkWin(point) {
-        if (point == 80) {
-            setTimeout(()=>{
+        if (point == 0) {
+            setTimeout(() => {
                 this._createGameOver();
-            },1000)
+            }, 1000)
             setTimeout(() => {
                 this.removeCard();
             }, 2500)
