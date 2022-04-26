@@ -255,6 +255,7 @@ class Game extends Node {
         console.log(this.children);
     }
     resetGame() {
+        this.toTalPoint.value = 100;
         this.point = 100;
         this._createScore();
         this._createCards();
