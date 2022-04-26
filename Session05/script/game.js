@@ -17,24 +17,20 @@ class Game extends Node {
         this.soundBreak = new Audio("./audio/break.mp3");
         this.soundShot = new Audio("./audio/shot.mp3");
         this.soundDeath = new Audio("./audio/death.mp3");
-
         this.count = 0;
-        //this._isClicked = false;
-        this.canClick = false;
+        this.canClick = true;
         this.fistCard = null;
         this.secondCard = null;
         this.toTalPoint = { value: 100 };
         this.point = 100;
         this._createScore();
         this._createPlayGame();
-        setTimeout(() => {
-            this.canClick = true
-        }, 5000);
     }
     _createBackGround() {
         this.elm.style.backgroundImage = "url(./images/trucxanh_bg.jpg)";
         this.elm.style.top = "20%";
         this.elm.style.left = "25%";
+        this.elm.style.backgroundSize = "cover";
         this.width = 800;
         this.height = 600;
     }
@@ -44,6 +40,7 @@ class Game extends Node {
         this.cards = [];
         this.tl = gsap.timeline();
         for (let index = 19; index >= 0; index--) {
+            this.canClick = false;
             let card = new Card(index);
             this.cards.push(card);
             card.setValue(index % 10);
@@ -151,6 +148,9 @@ class Game extends Node {
             var y = row * 100 + 130;
             TweenMax.to(arrCards[index], 0.6, { ease: Back.easeOut.config(8), x: x, y: y, delay: (index + 1) * 0.1 })
         }
+        setTimeout(() => {
+            this.canClick = true;
+        }, 3000);
     }
 
     onClickCard(card) {
@@ -165,7 +165,6 @@ class Game extends Node {
             this.soundShot.play();
             this.fistCard.flipOpenCard();
             console.log('first01', this.fistCard.value, this.fistCard.index);
-
         } else {
             this.canClick = false;
             this.secondCard = card;
@@ -191,6 +190,7 @@ class Game extends Node {
     }
 
     compareCard() {
+        this.canClick = false;
         if (this.fistCard.value === this.secondCard.value) {
             // hide
             this.canClick = false;
@@ -212,10 +212,11 @@ class Game extends Node {
             this.secondCard.flipCloseCard();
             this.point -= 10;
         }
-        this.canClick = true;
+
         this.fistCard = null;
         this.checkWin(this.point);
         setTimeout(() => {
+            this.canClick = true;
             this.countPoint(this.point);
         }, 1000)
     }
